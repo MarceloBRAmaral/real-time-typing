@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Real-Time Typing</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #other-user-input {
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 20px;
+      height: 100px;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <h1>Real-Time Typing</h1>
+  <input type="text" id="user-input" placeholder="Type something...">
+  <div id="other-user-input">
+    <p>Other user's input will appear here...</p>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
+  <script>
+    const socket = io(); // Connect to the server
+
+    const userInput = document.getElementById('user-input');
+    const otherUserInput = document.getElementById('other-user-input');
+
+    // Send typing updates to the server
+    userInput.addEventListener('input', () => {
+      socket.emit('typing', userInput.value);
+    });
+
+    // Receive typing updates from the server
+    socket.on('typing', (data) => {
+      otherUserInput.innerHTML = `<p>${data}</p>`;
+    });
+  </script>
+</body>
+</html>
