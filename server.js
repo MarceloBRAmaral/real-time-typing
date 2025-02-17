@@ -13,7 +13,9 @@ app.get('/', (req, res) => {
 
 // Handle socket connections
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  // Get the user's IP address
+  const userIp = socket.handshake.address;
+  console.log(`A user connected with IP: ${userIp}`);
 
   // Listen for typing events
   socket.on('typing', (data) => {
@@ -23,7 +25,7 @@ io.on('connection', (socket) => {
 
   // Handle disconnection
   socket.on('disconnect', () => {
-    console.log('user disconnected');
+    console.log(`User with IP ${userIp} disconnected`);
   });
 });
 
