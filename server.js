@@ -20,7 +20,7 @@ io.on('connection', (socket) => {
     const { username, message } = data;
 
     // Log the message and username
-    console.log(`${username}: ${message}`);
+    console.log(`User ${username} sent this message: ${message}`);
 
     // Broadcast the formatted message to all users
     io.emit('receive-message', { username, message });
