@@ -15,12 +15,15 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('a user connected');
 
-  // Listen for typing events
-  socket.on('typing', (data) => {
-    // Log what the user is typing
-    console.log(`User is typing: ${data}`);
-    // Broadcast the typing data to all other users
-    socket.broadcast.emit('typing', data);
+  // Listen for the send-message event
+  socket.on('send-message', (data) => {
+    const { username, message } = data;
+
+    // Log the message and username
+    console.log(`User ${username} sent this message: ${message}`);
+
+    // Broadcast the formatted message to all users
+    io.emit('receive-message', { username, message });
   });
 
   // Handle disconnection

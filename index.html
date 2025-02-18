@@ -16,13 +16,24 @@
       height: 100px;
       overflow-y: auto;
     }
+    #message-container {
+      margin-top: 20px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+    }
   </style>
 </head>
 <body>
   <h1>Real-Time Typing</h1>
-  <input type="text" id="user-input" placeholder="Type something...">
+  <input type="text" id="user-input" placeholder="Type your message...">
+  <div id="message-container">
+    <input type="text" id="username-input" placeholder="Enter your username">
+    <button id="send-button">Send Message</button>
+  </div>
   <div id="other-user-input">
-    <p>Other user's input will appear here...</p>
+    <p>Messages will appear here...</p>
   </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.4/socket.io.js"></script>
@@ -30,16 +41,34 @@
     const socket = io(); // Connect to the server
 
     const userInput = document.getElementById('user-input');
+    const usernameInput = document.getElementById('username-input');
+    const sendButton = document.getElementById('send-button');
     const otherUserInput = document.getElementById('other-user-input');
 
-    // Send typing updates to the server
-    userInput.addEventListener('input', () => {
-      socket.emit('typing', userInput.value);
+    // Send message when the button is clicked
+    sendButton.addEventListener('click', () => {
+      const message = userInput.value;
+      const username = usernameInput.value;
+
+      if (message && username) {
+        // Emit the message to the server
+        socket.emit('send-message', { username, message });
+
+        // Clear the message input field
+        userInput.value = '';
+      } else {
+        alert('Please enter both a username and a message.');
+      }
     });
 
-    // Receive typing updates from the server
-    socket.on('typing', (data) => {
-      otherUserInput.innerHTML = `<p>${data}</p>`;
+    // Receive messages from the server
+    socket.on('receive-message', (data) => {
+      const messageElement = document.createElement('p');
+      messageElement.textContent = `User ${data.username} sent this message: ${data.message}`;
+      otherUserInput.appendChild(messageElement);
+
+      // Scroll to the bottom of the message container
+      otherUserInput.scrollTop = otherUserInput.scrollHeight;
     });
   </script>
 </body>
